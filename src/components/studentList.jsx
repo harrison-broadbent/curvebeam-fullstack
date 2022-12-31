@@ -30,6 +30,13 @@ export default function StudentList({
         })}
         <br />
         <p className="font-bold">
+          Collected students:{" "}
+          {students.reduce(
+            (sum, student) => (sum += student.collected === true ? 1 : 0),
+            0
+          )}
+        </p>
+        <p className="font-bold">
           Remaining students:{" "}
           {students.reduce(
             (sum, student) => (sum += student.collected === false ? 1 : 0),
