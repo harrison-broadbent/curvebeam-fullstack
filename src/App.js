@@ -4,13 +4,16 @@
  * [X] Reset each list
  * [X] check off students as they leave
  * [X] count remaining students
- * [ ] error message if number plate DNE
- * [ ]
+ * [X] error message if number plate DNE
+ * [ ] save data to backend service (firebase)
  */
 
-import "./index.css";
-import StudentList from "./components/studentList";
 import * as React from "react";
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, child, get, set } from "firebase/database";
+
+import StudentList from "./components/studentList";
+import "./index.css";
 
 export default function App() {
   let defaultStudentGroup1 = [
@@ -196,8 +199,61 @@ export default function App() {
   let [studentGroup1, setStudentGroup1] = React.useState(defaultStudentGroup1);
   let [studentGroup2, setStudentGroup2] = React.useState(defaultStudentGroup2);
   let [errorMsg, setErrorMsg] = React.useState("");
-
   let [searchText, setSearchText] = React.useState("");
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDGpdStowTvGZ9hsQIGgtYvtuqE4pGup-A",
+    authDomain: "curvebeam-fullstack.firebaseapp.com",
+    projectId: "curvebeam-fullstack",
+    storageBucket: "curvebeam-fullstack.appspot.com",
+    messagingSenderId: "118396580823",
+    appId: "1:118396580823:web:c3948fc8a1c904c098d192",
+    databaseURL: "https://curvebeam-fullstack-default-rtdb.firebaseio.com",
+  };
+  const app = initializeApp(firebaseConfig);
+
+  // get initial application data,
+  React.useEffect(() => {
+    // get initial app state
+    const database = getDatabase();
+    get(ref(database))
+      .then((snapshot) => {
+        // set student groups according to database data
+        setStudentGroup1(snapshot.val().sg1);
+        setStudentGroup2(snapshot.val().sg2);
+        console.log("Successfully get initial firebase data");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  // save application data to backend
+  // We set a timeout of 1000ms, and if no other changes are made then we save
+  // (ie. maintain a bit of a buffer so we aren't sending heaps of queries to the backend)
+  React.useEffect(() => {
+    const database = getDatabase();
+    const backendSaveService = setTimeout(() => {
+      // format the data to match firebase
+      // and set highlighted to false on all records
+      const data = {
+        sg1: studentGroup1.map((s) => {
+          s.highlighted = false;
+          return s;
+        }),
+        sg2: studentGroup2.map((s) => {
+          s.highlighted = false;
+          return s;
+        }),
+      };
+
+      set(ref(database), data);
+      console.log("Saved data to firebase", data, studentGroup1, studentGroup2);
+    }, 1000);
+
+    return () => clearInterval(backendSaveService);
+  }, [studentGroup1, studentGroup2]);
+
   React.useEffect(() => {
     let foundResult = false;
 
@@ -269,7 +325,7 @@ export default function App() {
         </div>
       </div>
 
-      <div className="p-4 mt-12 flex flex-col">
+      <div className="p-2 mt-6 flex flex-col">
         <label htmlFor="searchInput">Search for a number plate: </label>
         <input
           type="text"
