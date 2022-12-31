@@ -9,5 +9,7 @@ URL: https://curvebeam-fullstack.web.app/
 The application is a simple ReactJS application, connecting to a Firebase realtime database for storage, and hosted on the firebase hosting platform.
 
 Frontend: ReactJS
+
 Backend: Firebase
+
 Hosting: Firebase
