@@ -1,18 +1,10 @@
-/**
- * TODO:
- * [X] Search for number plate
- * [X] Reset each list
- * [X] check off students as they leave
- * [X] count remaining students
- * [X] error message if number plate DNE
- * [ ] save data to backend service (firebase)
- */
-
 import * as React from "react";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, child, get, set } from "firebase/database";
 
 import StudentList from "./components/studentList";
+
+// Imports TailwindCSS styles into the main app
 import "./index.css";
 
 export default function App() {
@@ -198,9 +190,10 @@ export default function App() {
 
   let [studentGroup1, setStudentGroup1] = React.useState(defaultStudentGroup1);
   let [studentGroup2, setStudentGroup2] = React.useState(defaultStudentGroup2);
-  let [errorMsg, setErrorMsg] = React.useState("");
-  let [searchText, setSearchText] = React.useState("");
+  let [errorMsg, setErrorMsg] = React.useState(""); // search box error message
+  let [searchText, setSearchText] = React.useState(""); // search box current text
 
+  // config information for the firebase database
   const firebaseConfig = {
     apiKey: "AIzaSyDGpdStowTvGZ9hsQIGgtYvtuqE4pGup-A",
     authDomain: "curvebeam-fullstack.firebaseapp.com",
@@ -212,7 +205,7 @@ export default function App() {
   };
   const app = initializeApp(firebaseConfig);
 
-  // get initial application data,
+  // get initial application data from firebase
   React.useEffect(() => {
     // get initial app state
     const database = getDatabase();
@@ -228,7 +221,7 @@ export default function App() {
       });
   }, []);
 
-  // save application data to backend
+  // save application data to backend whenever a student group is updated
   // We set a timeout of 1000ms, and if no other changes are made then we save
   // (ie. maintain a bit of a buffer so we aren't sending heaps of queries to the backend)
   React.useEffect(() => {
@@ -254,6 +247,7 @@ export default function App() {
     return () => clearInterval(backendSaveService);
   }, [studentGroup1, studentGroup2]);
 
+  // highlight students if the search text matches or partially matches one of their number plates
   React.useEffect(() => {
     let foundResult = false;
 

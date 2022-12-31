@@ -1,3 +1,10 @@
+/**
+ * StudentList
+ *
+ * Maps list of students into their individual lists
+ * also handles resetting a list back to default, and calculating the remaining students
+ */
+
 import React from "react";
 import ListItem from "./listItem";
 

@@ -1,3 +1,10 @@
+/**
+ * listItem
+ *
+ * An individual item in a studentList
+ * Handles collecting/checking itself off and adding new plate values
+ */
+
 import React from "react";
 
 export default function ListItem({ student, students, setStudents }) {
@@ -5,10 +12,13 @@ export default function ListItem({ student, students, setStudents }) {
   let [editMode, setEditMode] = React.useState(false);
   let [plateValues, setPlateValues] = React.useState(student.plates);
 
+  // sync the checkbox state if we update our student somewhere else in the app
+  // ie. updating the app with data from the backend
   React.useEffect(() => {
     setChecked(student.collected);
   }, [student]);
 
+  // update the current student's collected status based on the checkbox status
   React.useEffect(() => {
     setStudents(
       students.map((s) => {
@@ -21,6 +31,7 @@ export default function ListItem({ student, students, setStudents }) {
     );
   }, [checked]);
 
+  // update the current students number plate values based on the plates input field
   React.useEffect(() => {
     setStudents(
       students.map((s) => {
@@ -47,6 +58,7 @@ export default function ListItem({ student, students, setStudents }) {
         />
         <span className="ml-2">
           {student.name.padEnd(8)} |{" "}
+          {/* display either a text input or text of the student number plates, depending on the editMode variable */}
           {editMode === true ? (
             <input
               className="border"
