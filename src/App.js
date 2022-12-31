@@ -255,6 +255,7 @@ export default function App() {
       studentGroup1.map((student) => {
         if (
           searchText.length > 0 &&
+          student.collected === false &&
           student.plates
             .join("")
             .toUpperCase()
@@ -273,6 +274,7 @@ export default function App() {
       studentGroup2.map((student) => {
         if (
           searchText.length > 0 &&
+          student.collected === false &&
           student.plates
             .join("")
             .toUpperCase()
